@@ -19,27 +19,27 @@ const IndexedDB = () => {
 
     // 2. Open DB with 'indexedDB.open()' and returns IDBOpenDBRequest.
     const request = indexedDB.open(name, version); // IDBOpenDBRequest
-    console.log(request);
+    // console.log(request);
 
     // 3. As DB is initialised first time, 'onupgradedneeded()' is called.
     request.onupgradeneeded = function (event) { // trigger when db is loaded with bigger version than existing number.
       // 4. get IDBDatabase as a result of request.
       db = request.result; // IDBDatabase
-      console.log(db);
+    //   console.log(db);
 
       const key = "id";
       const name = "store name"; // store name
 
       // 5. Create object store to store objects, returns IDBObjectStore.
       const store = db.createObjectStore(name, { keyPath: key }); // IDBObjectStore
-      console.log(store);
+    //   console.log(store);
 
       const keyPath = "name";
       const indexName = "by_name"; // table name
 
       // 6. Create 'Index' object store to store 'Index' objects, returns IDBIndex.
       const index = store.createIndex(indexName, keyPath); // IDBIndex
-      console.log(index);
+    //   console.log(index);
 
       const obj = { [key]: 1, [keyPath]: "name" };
       // 7. Add a record with IDBObjectStore.
@@ -47,10 +47,10 @@ const IndexedDB = () => {
     };
 
     // 8. As DB is called successfully, onsuccess callback is invoked.
-    // (not because of onupgradeneeded or store.pur(), but because of .open() successfully)
+    // (not because of onupgradeneeded or store.put(), but because of .open() successfully)
     request.onsuccess = function (event) {
       db = request.result;
-      console.log(db);
+    //   console.log(db);
 
       // 9. Create transaction context with transaction and returns IDBTransaction.
       const transaction = db.transaction(["store name"], "readonly"); // IDBTransaction
@@ -60,17 +60,17 @@ const IndexedDB = () => {
 
       // 11. get IDBRequest using 'openCursor' that requests Cursor.
       const cursor = objectStore.openCursor(); // IDBRequest
-      console.log(cursor)
+    //   console.log(cursor)
 
       // 12. As Cursor request is successful, onsuccess is invoked.
       cursor.onsuccess = function (event: Event) {
-        console.log(event);
+        // console.log(event);
         // 13. Get IDBCursorWithValue as result of event..?
         const target = event.target as IDBRequest;
 
         // 14. Find value contained in cursor.
         const cursor = target.result ?? "";
-        console.log(cursor);
+        // console.log(cursor);
         if (cursor) {
           // { id: 1, name: 'name' }
           console.log(cursor.value);
@@ -83,13 +83,12 @@ const IndexedDB = () => {
       };
     };
 
-    //window.indexedDB > DB.open() 
+    //window.indexedDB > DB.open()
+    // - Common
     // >> initialise = onupgradedneeded() > db.createObjectStore > createIndex() > put() 
     // - Write
     // >> onsuccess > transaction context > find object store > openCursor() > cursor.onsuccess() > event.target as IDBRequest >  cursor.value > cursor.continue > end
     // - Read
-
-
 
     return () => {
       console.log("clean up");
